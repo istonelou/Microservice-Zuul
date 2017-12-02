@@ -9,13 +9,11 @@ import io.kubernetes.client.apis.CoreV1Api;
 import io.kubernetes.client.models.V1Pod;
 import io.kubernetes.client.models.V1PodList;
 import io.kubernetes.client.util.Config;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @EnableZuulProxy
 @SpringBootApplication
 public class CvApiGatewayApplication {
 	
-	@Autowired
 	private static DemoController mvc;
 
 	public static void main(String[] args) throws Exception {
