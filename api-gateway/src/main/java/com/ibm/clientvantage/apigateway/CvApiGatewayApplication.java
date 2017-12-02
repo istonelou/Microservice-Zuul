@@ -1,7 +1,5 @@
 package com.ibm.clientvantage.apigateway;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
@@ -11,27 +9,19 @@ import io.kubernetes.client.apis.CoreV1Api;
 import io.kubernetes.client.models.V1Pod;
 import io.kubernetes.client.models.V1PodList;
 import io.kubernetes.client.util.Config;
-
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @EnableZuulProxy
 @SpringBootApplication
-@RunWith(SpringJUnit4ClassRunner.class)
 public class CvApiGatewayApplication {
 	
 	@Autowired
-	private static MockMvc mvc;
+	private static DemoController mvc;
 
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(CvApiGatewayApplication.class, args);
 		
-		mvc.perform(MockMvcRequestBuilders.get("/refreshRoute"))
-				.andDo(print()) 
-	            .andReturn();  
+		mvc.refreshRoute();
 		
 		ApiClient client = Config.defaultClient();
         Configuration.setDefaultApiClient(client);
