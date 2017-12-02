@@ -14,13 +14,8 @@ import io.kubernetes.client.util.Config;
 @SpringBootApplication
 public class CvApiGatewayApplication {
 	
-	private static DemoController mvc;
-
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(CvApiGatewayApplication.class, args);
-		
-		mvc = new DemoController();
-		mvc.refreshRoute();
 		
 		ApiClient client = Config.defaultClient();
         Configuration.setDefaultApiClient(client);
