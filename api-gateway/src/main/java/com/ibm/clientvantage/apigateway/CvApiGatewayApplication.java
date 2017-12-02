@@ -1,29 +1,31 @@
 package com.ibm.clientvantage.apigateway;
 
+import java.util.Timer;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
-import io.kubernetes.client.ApiClient;
-import io.kubernetes.client.Configuration;
-import io.kubernetes.client.apis.CoreV1Api;
-import io.kubernetes.client.models.V1Pod;
-import io.kubernetes.client.models.V1PodList;
-import io.kubernetes.client.util.Config;
 
 @EnableZuulProxy
 @SpringBootApplication
 public class CvApiGatewayApplication {
 	
+    @Autowired
+    private static RefreshRouteService refreshRouteService;
+    
+	private static boolean mClusterActive = true;
+	
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(CvApiGatewayApplication.class, args);
 		
-		ApiClient client = Config.defaultClient();
-        Configuration.setDefaultApiClient(client);
-
-        CoreV1Api api = new CoreV1Api();
-        V1PodList list = api.listPodForAllNamespaces(null, null, null, null, null, null, null, null, null);
-        for (V1Pod item : list.getItems()) {
-            System.out.println(item.getMetadata().getName());
-        }
+		Timer timer = new Timer();     
+        timer.schedule(new RetrieveClusterServices(), 5000, 5000);//start the task after 5 seconds, and execute every 5 seconds
 	}
+	
+	static class RetrieveClusterServices extends java.util.TimerTask {
+        public void run(){     
+        		refreshRouteService.refreshRoute();
+        }     
+    }   
 }
