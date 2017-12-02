@@ -21,6 +21,7 @@ public class CvApiGatewayApplication {
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(CvApiGatewayApplication.class, args);
 		
+		mvc = new DemoController();
 		mvc.refreshRoute();
 		
 		ApiClient client = Config.defaultClient();
