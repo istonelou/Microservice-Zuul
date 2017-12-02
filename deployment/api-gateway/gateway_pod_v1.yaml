@@ -7,7 +7,7 @@ metadata:
 spec:
   containers:
     - name: spring-gateway
-      image: localhost:5000/api-gateway
+      image: localhost:5000/api-gateway:1.0
       ports:
         - containerPort: 8090
  
