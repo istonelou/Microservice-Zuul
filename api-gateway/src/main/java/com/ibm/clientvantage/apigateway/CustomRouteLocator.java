@@ -7,12 +7,22 @@ import org.springframework.cloud.netflix.zuul.filters.ZuulProperties.ZuulRoute;
 
 import org.springframework.util.StringUtils;
 
+import io.kubernetes.client.ApiClient;
+import io.kubernetes.client.ApiException;
+import io.kubernetes.client.Configuration;
+import io.kubernetes.client.apis.CoreV1Api;
+import io.kubernetes.client.models.V1Pod;
+import io.kubernetes.client.models.V1PodList;
+import io.kubernetes.client.models.V1Service;
+import io.kubernetes.client.models.V1ServiceList;
+import io.kubernetes.client.util.Config;
+
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class CustomRouteLocator extends SimpleRouteLocator implements RefreshableRouteLocator{
 
-    //public final static Logger logger = LoggerFactory.getLogger(CustomRouteLocator.class);
 
     private ZuulProperties properties;
 
@@ -20,7 +30,6 @@ public class CustomRouteLocator extends SimpleRouteLocator implements Refreshabl
     public CustomRouteLocator(String servletPath, ZuulProperties properties) {
         super(servletPath, properties);
         this.properties = properties;
-        //logger.info("servletPath:{}",servletPath);
     }
 
     //父类已经提供了这个方法，这里写出来只是为了说明这一个方法很重要！！！
@@ -41,43 +50,64 @@ public class CustomRouteLocator extends SimpleRouteLocator implements Refreshabl
         //从application.properties中加载路由信息
         routesMap.putAll(super.locateRoutes());
         //从db中加载路由信息
+        locateRoutesFromAPIServer();
+        //routesMap.putAll(locateRoutesFromDB());
         //routesMap.putAll(locateRoutesFromDB());
         //优化一下配置
         LinkedHashMap<String, ZuulRoute> values = new LinkedHashMap<>();
-        for (Map.Entry<String, ZuulRoute> entry : routesMap.entrySet()) {
-            String path = entry.getKey();
-            // Prepend with slash if not already present.
-            if (!path.startsWith("/")) {
-                path = "/" + path;
-            }
-            if (StringUtils.hasText(this.properties.getPrefix())) {
-                path = this.properties.getPrefix() + path;
-                if (!path.startsWith("/")) {
-                    path = "/" + path;
-                }
-            }
-            values.put(path, entry.getValue());
-        }
+//        for (Map.Entry<String, ZuulRoute> entry : routesMap.entrySet()) {
+//            String path = entry.getKey();
+//            // Prepend with slash if not already present.
+//            if (!path.startsWith("/")) {
+//                path = "/" + path;
+//            }
+//            if (StringUtils.hasText(this.properties.getPrefix())) {
+//                path = this.properties.getPrefix() + path;
+//                if (!path.startsWith("/")) {
+//                    path = "/" + path;
+//                }
+//            }
+//            values.put(path, entry.getValue());
+//        }
         return values;
     }
 
-//    private Map<String, ZuulRoute> locateRoutesFromDB(){
-//        Map<String, ZuulRoute> routes = new LinkedHashMap<>();
-//        List<ZuulRouteVO> results = jdbcTemplate.query("select * from gateway_api_define where enabled = true ",new BeanPropertyRowMapper<>(ZuulRouteVO.class));
+    private Map<String, ZuulRoute> locateRoutesFromAPIServer(){
+    	
+        ApiClient client = null;
+		try {
+			client = Config.defaultClient();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        Configuration.setDefaultApiClient(client);
+
+        CoreV1Api api = new CoreV1Api();
+        V1ServiceList list = null;
+		try {
+			list = api.listServiceForAllNamespaces(null, null, null, "prePath", null, null, null, null, null);
+		} catch (ApiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        for (V1Service item : list.getItems()) {
+        	 	System.out.println("name" + item.getMetadata().getName());
+        	 	System.out.println("Labels" + item.getMetadata().getLabels());
+        	 	System.out.println("Ports" + item.getSpec().getPorts());
+        }
+        Map<String, ZuulRoute> routes = new LinkedHashMap<>();
+//        //List<ZuulRouteVO> results = jdbcTemplate.query("select * from gateway_api_define where enabled = true ",new BeanPropertyRowMapper<>(ZuulRouteVO.class));
 //        for (ZuulRouteVO result : results) {
-//            if(org.apache.commons.lang3.StringUtils.isBlank(result.getPath()) || org.apache.commons.lang3.StringUtils.isBlank(result.getUrl()) ){
-//                continue;
-//            }
 //            ZuulRoute zuulRoute = new ZuulRoute();
 //            try {
 //                org.springframework.beans.BeanUtils.copyProperties(result,zuulRoute);
 //            } catch (Exception e) {
-//                logger.error("=============load zuul route info from db with error==============",e);
 //            }
 //            routes.put(zuulRoute.getPath(),zuulRoute);
 //        }
-//        return routes;
-//    }
+        return routes;
+    }
 
     public static class ZuulRouteVO {
 
