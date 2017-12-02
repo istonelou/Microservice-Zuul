@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: spring-gateway
+  labels:
+    name: spring-gateway
+spec:
+  containers:
+    - name: spring-gateway
+      image: gateway:v1
+      ports:
+        - containerPort: 8090
+ 
