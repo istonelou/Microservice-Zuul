@@ -12,15 +12,18 @@ import io.kubernetes.client.models.V1PodList;
 import io.kubernetes.client.util.Config;
 import io.kubernetes.client.ApiException;
 import java.io.IOException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @EnableZuulProxy
 @SpringBootApplication
 public class CvApiGatewayApplication {
+	
+	@Autowired
+	private static DemoController controller;
 
 	public static void main(String[] args) throws IOException, ApiException {
 		SpringApplication.run(CvApiGatewayApplication.class, args);
 		
-		DemoController controller = new DemoController();
 		controller.refreshRoute();
 		
 		ApiClient client = Config.defaultClient();
