@@ -19,8 +19,8 @@ public class CvApiGatewayApplication {
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(CvApiGatewayApplication.class, args);
 		
-		Timer timer = new Timer();     
-        timer.schedule(new RetrieveClusterServices(), 5000, 5000);//start the task after 5 seconds, and execute every 5 seconds
+		Timer timer = new Timer(); 
+        timer.schedule(new RetrieveClusterServices(), 15000, 5000);//start the task after 5 seconds, and execute every 5 seconds
 	}
 	
 	static class RetrieveClusterServices extends java.util.TimerTask {
