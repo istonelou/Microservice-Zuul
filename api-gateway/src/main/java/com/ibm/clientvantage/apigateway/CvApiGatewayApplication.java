@@ -1,8 +1,8 @@
 package com.ibm.clientvantage.apigateway;
 
+import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import io.kubernetes.client.ApiClient;
 import io.kubernetes.client.Configuration;
@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @EnableZuulProxy
 @SpringBootApplication
-@AutoConfigureMockMvc
 public class CvApiGatewayApplication {
 	
 	@Autowired
