@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
+import org.springframework.context.annotation.ComponentScan;
 
 @EnableZuulProxy
 @SpringBootApplication
+@ComponentScan(basePackages = {"com.ibm.clientvantage.apigateway"})
 public class CvApiGatewayApplication {
 	
 	private static boolean mClusterActive = true;
@@ -17,7 +19,7 @@ public class CvApiGatewayApplication {
 		SpringApplication.run(CvApiGatewayApplication.class, args);
 		
 		Timer timer = new Timer(); 
-        timer.schedule(new RetrieveClusterServices(), 1000, 5000);//start the task after 5 seconds, and execute every 5 seconds
+        timer.schedule(new RetrieveClusterServices(), 10000, 5000);//start the task after 5 seconds, and execute every 5 seconds
 	}  
 }
 
