@@ -15,6 +15,9 @@ public class CvApiGatewayApplication implements CommandLineRunner{
 	
 	private static boolean mClusterActive = true;
 	
+	@Autowired
+	RefreshRouteService mRefreshService;
+	
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(CvApiGatewayApplication.class, args);
 	}
@@ -22,18 +25,22 @@ public class CvApiGatewayApplication implements CommandLineRunner{
 	@Override
 	public void run(String... args) throws Exception {
 		Timer timer = new Timer(); 
-        timer.schedule(new RetrieveClusterServices(), 10000, 5000);//start the task after 5 seconds, and execute every 5 seconds
+        timer.schedule(new RetrieveClusterServices(mRefreshService), 10000, 5000);//start the task after 5 seconds, and execute every 5 seconds
 	}
 }
 
 class RetrieveClusterServices extends java.util.TimerTask{
+
+	private RefreshRouteService mService;
 	
-	@Autowired
-	RefreshRouteService mRefreshService;
+	public RetrieveClusterServices(RefreshRouteService service) {
+		super();
+		this.mService = service;
+	}
 	
 	@Override  
 	public void run() {
-		mRefreshService.refreshRoute();
+		mService.refreshRoute();
 		System.out.println("now start to retrieve the services");
 	}  
 }  
