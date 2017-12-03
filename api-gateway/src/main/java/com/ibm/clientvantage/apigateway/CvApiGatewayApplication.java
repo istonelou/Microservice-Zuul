@@ -24,7 +24,7 @@ public class CvApiGatewayApplication {
 class RetrieveClusterServices extends java.util.TimerTask{
 	
 	@Autowired
-	private RefreshRouteService mRefreshService;
+	RefreshRouteService mRefreshService;
 	
 	@Override  
 	public void run() {
